@@ -157,8 +157,13 @@ void StartScene::printServerInfo(){
     }else
         server_log->append(tr("Seconardary general is disabled"));
 
-    if(Config.EnableAI)
+    if(Config.EnableAI){
         server_log->append(tr("This server is AI enabled, AI delay is %1 milliseconds").arg(Config.AIDelay));
+        if(Config.value("AIChat", true).toBool())
+            server_log->append(tr("This server is AI chat enabled"));
+        else
+            server_log->append(tr("This server is AI chat disabled"));
+    }
     else
         server_log->append(tr("This server is AI disabled"));
 }

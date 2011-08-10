@@ -448,7 +448,7 @@ QLayout *ServerDialog::createRight(){
         role_predictable_checkbox->setChecked(Config.value("RolePredictable", true).toBool());
 
         ai_chat_checkbox = new QCheckBox(tr("AI Chat"));
-        ai_chat_checkbox->setChecked(Config.value("AIChat", false).toBool());
+        ai_chat_checkbox->setChecked(Config.value("AIChat", true).toBool());
 
         ai_delay_spinbox = new QSpinBox;
         ai_delay_spinbox->setMinimum(0);

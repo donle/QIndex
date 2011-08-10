@@ -2103,7 +2103,7 @@
         <translation>大家好，我是一个机器人</translation>
     </message>
     <message>
-        <location filename="src/room.cpp" line="2176"/>
+        <location filename="src/room.cpp" line="2181"/>
         <source>Card can not parse:
  %1</source>
         <oldsource>Card can not parse:
@@ -3008,6 +3008,16 @@
     </message>
     <message>
         <location filename="src/startscene.cpp" line="163"/>
+        <source>This server is AI chat enabled</source>
+        <translation type="unfinished">服务器开启了 AI 聊天</translation>
+    </message>
+    <message>
+        <location filename="src/startscene.cpp" line="165"/>
+        <source>This server is AI chat disabled</source>
+        <translation type="unfinished">服务器关闭了 AI 聊天</translation>
+    </message>
+    <message>
+        <location filename="src/startscene.cpp" line="168"/>
         <source>This server is AI disabled</source>
         <translation>此服务器尚未启用 AI</translation>
     </message>
