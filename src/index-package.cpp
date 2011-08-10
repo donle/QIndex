@@ -24,10 +24,11 @@ public:
         if(target->getPhase() == Player::Play && room->askForSkillInvoke(target, objectName())){
             room->playSkillEffect(objectName());
             ServerPlayer *player = room->askForPlayerChosen(target, room->getOtherPlayers(target), objectName());
-            const General *general = player->getGeneral();
-
-            QList<const Skill *> skills = general->findChildren<const Skill *>();
+            QList<const Skill *> skills = player->getVisibleSkillList();
             foreach(const Skill *skill, skills){
+                if(skill->inherits("WeaponSkill") || skill->inherits("ArmorSkill"))
+                    continue;
+
                 if(!skill->isLordSkill() && !skill->isLimitedSkill())
                     room->acquireSkill(target, skill->objectName());
                 if(skill->objectName() == "baiyi"){
