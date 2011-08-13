@@ -171,7 +171,7 @@ public:
                     QString prompt = "double-sword-card:" + effect.from->getGeneralName();
                     const Card *card = room->askForCard(effect.to, ".", prompt);
                     if(card){
-                        room->throwCard(card);
+                        room->throwCard(card, true);
                     }else
                         draw_card = true;
                 }

@@ -86,7 +86,7 @@ void GameRule::onPhaseChange(ServerPlayer *player) const{
                     room->showAllCards(player);
 
                     foreach(const Card *card, handcards.toSet() - jilei_cards){
-                        room->throwCard(card);
+                        room->throwCard(card, true);
                     }
 
                     return;

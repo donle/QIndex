@@ -510,7 +510,7 @@ public:
 
                     QList<const Card *> judges = player->getCards("j");
                     foreach(const Card *card, judges)
-                        room->throwCard(card->getEffectiveId());
+                        room->throwCard(card->getEffectiveId(), true);
                 }
             }
             break;

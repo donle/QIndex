@@ -57,6 +57,8 @@ void General::addSkill(Skill *skill){
     skill->setParent(this);
     skill->initMediaSource();
     skill_set << skill->objectName();
+
+    skill->setSkillOwnerName(this->objectName());
 }
 
 void General::addSkill(const QString &skill_name){

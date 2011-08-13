@@ -8,8 +8,8 @@
 
 #include <QFile>
 
-Skill::Skill(const QString &name, Frequency frequency)
-    :frequency(frequency), default_choice("no"), trigger_skill(false)
+Skill::Skill(const QString &name, Frequency frequency, QString owner)
+    :frequency(frequency), default_choice("no"), trigger_skill(false), skill_owner(owner)
 {
     static QChar lord_symbol('$');
 
@@ -65,6 +65,21 @@ QString Skill::getDefaultChoice(ServerPlayer *) const{
 int Skill::getEffectIndex(ServerPlayer *, const Card *) const{
     return -1;
 }
+
+
+void Skill::setSkillOwnerName(QString owner_name){
+    if(skill_owner.isEmpty())
+        skill_owner = owner_name;
+    else if(skill_owner.contains(owner_name))
+        return;
+    else
+        skill_owner.append("+"+owner_name);
+}
+
+QString Skill::getSkillOwnerName() const{
+    return skill_owner;
+}
+
 
 void Skill::initMediaSource(){
     sources.clear();

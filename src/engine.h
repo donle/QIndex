@@ -87,6 +87,8 @@ public:
     const ProhibitSkill *isProhibited(const Player *from, const Player *to, const Card *card) const;
     int correctDistance(const Player *from, const Player *to) const;
 
+    QString getSkillOwners(QString &skill_name) const;
+
 private:
     QHash<QString, QString> translations;
     QHash<QString, const General *> generals, hidden_generals;

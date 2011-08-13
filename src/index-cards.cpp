@@ -422,8 +422,9 @@ void Recycle::onEffect(const CardEffectStruct &effect) const{
 
         effect.to->throwAllHandCards();
     }
-    else
-        room->throwCard(card->getEffectiveId());
+    else{
+        room->throwCard(card->getEffectiveId(), true);
+    }
 }
 
 void IndexPackage::addCards(){

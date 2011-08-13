@@ -47,15 +47,16 @@ void ServerPlayer::obtainCard(const Card *card, bool open){
 }
 
 void ServerPlayer::throwAllEquips(){
-    room->throwCard(getWeapon());
-    room->throwCard(getArmor());
-    room->throwCard(getDefensiveHorse());
-    room->throwCard(getOffensiveHorse());
+
+    room->throwCard(getWeapon(), true);
+    room->throwCard(getArmor(), true);
+    room->throwCard(getDefensiveHorse(), true);
+    room->throwCard(getOffensiveHorse(), true);
 }
 
 void ServerPlayer::throwAllHandCards(){
     foreach(const Card *card, handcards)
-        room->throwCard(card);
+        room->throwCard(card, true);
 }
 
 void ServerPlayer::throwAllMarks(){

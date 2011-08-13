@@ -305,7 +305,7 @@ void MainWindow::on_actionAbout_triggered()
     const char *time = __TIME__;
     content.append(tr("Compilation time: %1 %2 <br/>").arg(date).arg(time));
 
-    QString project_url = "http://github.com/Moligaloo/QSanguosha";
+    QString project_url = "http://github.com/donle/QIndex";
     content.append(tr("Project home: <a href='%1'>%1</a> <br/>").arg(project_url));
 
     QString forum_url = "http://qsanguosha.com";

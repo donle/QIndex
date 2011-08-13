@@ -87,6 +87,7 @@ public:
     int getCardFromPile(const QString &card_name);
     ServerPlayer *findPlayer(const QString &general_name, bool include_dead = false) const;
     ServerPlayer *findPlayerBySkillName(const QString &skill_name, bool include_dead = false) const;
+    QList<ServerPlayer *> findPlayersBySkillOwner(QString &skill_name, bool include_dead = false) const;
     void installEquip(ServerPlayer *player, const QString &equip_name);
     void transfigure(ServerPlayer *player, const QString &new_general, bool full_state, bool invoke_start = true);
     void swapSeat(ServerPlayer *a, ServerPlayer *b);
@@ -118,8 +119,8 @@ public:
     void obtainCard(ServerPlayer *target, const Card *card, bool open = true);
     void obtainCard(ServerPlayer *target, int card_id, bool open = true);
 
-    void throwCard(const Card *card);
-    void throwCard(int card_id);
+    void throwCard(const Card *card, bool only_throw = false);
+    void throwCard(int card_id, bool only_throw = false);
     void moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, bool open = true);
     void doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope);
 

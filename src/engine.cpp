@@ -293,7 +293,7 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
 }
 
 QString Engine::getVersion() const{
-    return "20110731";
+    return "20110815";
 }
 
 QStringList Engine::getExtensions() const{
@@ -314,8 +314,7 @@ QStringList Engine::getExtensions() const{
 QStringList Engine::getKingdoms() const{
     static QStringList kingdoms;
     if(kingdoms.isEmpty())
-        kingdoms << "wei" << "shu" << "wu" << "qun"
-                    << "agency" << "darkness" << "school" << "qingjiao";
+        kingdoms << "agency" << "darkness" << "school" << "qingjiao";
 
     return kingdoms;
 }
@@ -512,21 +511,6 @@ QStringList Engine::getRandomGenerals(int count, const QSet<QString> &ban_set) c
 }
 
 QList<int> Engine::getRandomCards() const{
-    if(Config.GameMode == "04_1v3"){
-        const Package *stdpack = findChild<const Package *>("standard");
-        QList<const Card *> stdcards = stdpack->findChildren<const Card *>();
-        QList<int> card_ids;
-
-        foreach(const Card *card, stdcards){
-            if(card->inherits("Disaster"))
-                continue;
-
-            card_ids << card->getId();
-        }
-
-        qShuffle(card_ids);
-        return card_ids;
-    }
 
     bool exclude_disaters = Config.GameMode == "06_3v3"
                             && Config.value("3v3/ExcludeDisasters", true).toBool();
@@ -602,6 +586,10 @@ void Engine::playCardEffect(const QString &card_name, bool is_male) const{
 
 const Skill *Engine::getSkill(const QString &skill_name) const{
     return skills.value(skill_name, NULL);
+}
+
+QString Engine::getSkillOwners(QString &skill_name) const{
+    return skills.value(skill_name, NULL)->getSkillOwnerName();
 }
 
 bool Engine::isTriggerSkill(QString &skill_name) const{

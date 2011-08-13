@@ -879,6 +879,23 @@ ServerPlayer *Room::findPlayerBySkillName(const QString &skill_name, bool includ
     return NULL;
 }
 
+QList<ServerPlayer *> Room::findPlayersBySkillOwner(QString &skill_name, bool include_dead) const{
+    const QList<ServerPlayer *> &list = include_dead ? players : alive_players;
+    QString owners = Sanguosha->getSkillOwners(skill_name);
+    QStringList names = owners.split("+");
+
+    QList<ServerPlayer *> targets;
+
+    foreach(QString name, names){
+        foreach(ServerPlayer *player, list){
+            if(player->getGeneralName() == name)
+                targets << player;
+        }
+    }
+
+    return targets;
+}
+
 void Room::installEquip(ServerPlayer *player, const QString &equip_name){
     if(player == NULL)
         return;
@@ -1783,7 +1800,7 @@ void Room::startGame(){
         }
     }
 
-    if((Config.Enable2ndGeneral || mode == "08boss") && mode != "02_1v1" && mode != "06_3v3" && mode != "04_1v3"){
+    if((Config.Enable2ndGeneral || mode == "08boss") && mode != "02_1v1" && mode != "06_3v3"){
         foreach(ServerPlayer *player, players)
             broadcastProperty(player, "general2");
     }
@@ -1899,19 +1916,26 @@ void Room::drawCards(ServerPlayer *player, int n){
         broadcastInvoke("drawNCards", draw_str, player);
 }
 
-void Room::throwCard(const Card *card){
+void Room::throwCard(const Card *card, bool only_throw){
     if(card == NULL)
         return;
 
     if(card->isVirtualCard()){
         QList<int> subcards = card->getSubcards();
         foreach(int subcard, subcards)
-            throwCard(subcard);
+            throwCard(subcard, only_throw);
     }else
-        throwCard(card->getId());
+        throwCard(card->getId(), only_throw);
 }
 
-void Room::throwCard(int card_id){
+void Room::throwCard(int card_id, bool only_throw){
+    if(only_throw){
+        const Card *card = Sanguosha->getCard(card_id);
+        ServerPlayer *target = getCardOwner(card_id);
+        QVariant data= QVariant::fromValue(card);
+        thread->trigger(CardDiscarded, target, data);
+    }
+
     moveCardTo(Sanguosha->getCard(card_id), NULL, Player::DiscardedPile, true);
 }
 
@@ -2282,7 +2306,8 @@ bool Room::askForDiscard(ServerPlayer *target, const QString &reason, int discar
     CardStar card_star = dummy_card;
     QVariant data = QVariant::fromValue(card_star);
     thread->trigger(CardDiscarded, target, data);
-    data=QString("%1:%2").arg("cardDiscard").arg(dummy_card->toString());
+
+    data = QString("%1:%2").arg("cardDiscard").arg(dummy_card->toString());
     thread->trigger(ChoiceMade, target, data);
     dummy_card->deleteLater();
 

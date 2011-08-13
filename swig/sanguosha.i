@@ -724,8 +724,8 @@ public:
     void obtainCard(ServerPlayer *target, const Card *card, bool open = true);
     void obtainCard(ServerPlayer *target, int card_id, bool open = true);
 
-    void throwCard(const Card *card);
-    void throwCard(int card_id);
+    void throwCard(const Card *card, bool only_throw = false);
+    void throwCard(int card_id, bool only_throw = false);
     void moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, bool open = true);
 
     // interactive methods

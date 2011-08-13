@@ -25,7 +25,7 @@ public:
         Limited
     };
 
-    explicit Skill(const QString &name, Frequency frequent = NotFrequent);
+    explicit Skill(const QString &name, Frequency frequent = NotFrequent, QString owner = "");
     bool isLordSkill() const;
     bool isLimitedSkill() const;
     QString getDescription() const;
@@ -44,6 +44,9 @@ public:
     Frequency getFrequency() const;
     QStringList getSources() const;
 
+    void setSkillOwnerName(QString owner_name);
+    QString getSkillOwnerName() const;
+
 protected:
     Frequency frequency;
     QString default_choice;
@@ -52,6 +55,8 @@ protected:
 private:
     bool lord_skill;
     QStringList sources;
+
+    QString skill_owner;
 };
 
 class ViewAsSkill:public Skill{
