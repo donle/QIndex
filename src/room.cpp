@@ -1595,6 +1595,9 @@ void Room::loseMaxHp(ServerPlayer *victim, int lose){
 }
 
 void Room::applyDamage(ServerPlayer *victim, const DamageStruct &damage){
+    if(ProceedFreeze(victim, damage.nature))
+        return;
+
     int new_hp = victim->getHp() - damage.damage;
 
     setPlayerProperty(victim, "hp", new_hp);
@@ -1606,6 +1609,38 @@ void Room::applyDamage(ServerPlayer *victim, const DamageStruct &damage){
     }
 
     broadcastInvoke("hpChange", change_str);
+}
+
+bool Room::ProceedFreeze(ServerPlayer *player, DamageStruct::Nature nature){
+    if(nature == DamageStruct::Freeze){
+        if(!player->hasFlag("freezed")){
+            setPlayerFlag(player, "freezed");
+            if(player->getPhase() != Player::NotActive)
+                setPlayerFlag(player, "freezing_keep");
+        }
+
+        LogMessage log;
+        log.type = "#Freezing";
+        log.to << player;
+        sendLog(log);
+
+        foreach(const Card *equip, player->getEquips())
+            moveCardTo(equip, player, Player::Hand);
+
+        return true;
+    }
+    else if(nature == DamageStruct::Fire){
+        if(player->hasFlag("freezed")){
+            setPlayerFlag(player, "-freezed");
+
+            LogMessage log;
+            log.type = "#Melt";
+            log.to << player;
+            sendLog(log);
+        }
+    }
+
+    return false;
 }
 
 void Room::recover(ServerPlayer *player, const RecoverStruct &recover, bool set_emotion){
@@ -1705,6 +1740,7 @@ void Room::sendDamageLog(const DamageStruct &data){
     case DamageStruct::Normal: log.arg2 = "normal_nature"; break;
     case DamageStruct::Fire: log.arg2 = "fire_nature"; break;
     case DamageStruct::Thunder: log.arg2 = "thunder_nature"; break;
+    case DamageStruct::Freeze: break;
     }
 
     sendLog(log);

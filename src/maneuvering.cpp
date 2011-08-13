@@ -26,7 +26,6 @@ FireSlash::FireSlash(Suit suit, int number)
     :NatureSlash(suit, number, DamageStruct::Fire)
 {
     setObjectName("fire_slash");
-    nature = DamageStruct::Fire;
 }
 
 Analeptic::Analeptic(Card::Suit suit, int number)

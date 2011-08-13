@@ -164,6 +164,7 @@ public:
     void removeMark(const QString &mark);
     virtual void setMark(const QString &mark, int value);
     int getMark(const QString &mark) const;
+    void removeAllMarks();
 
     void setChained(bool chained);
     bool isChained() const;
@@ -183,6 +184,7 @@ public:
     QSet<const TriggerSkill *> getTriggerSkills() const;
     QSet<const Skill *> getVisibleSkills() const;
     QList<const Skill *> getVisibleSkillList() const;
+    QSet<QString> getAcquiredSkills() const;
 
     virtual bool isProhibited(const Player *to, const Card *card) const;
     bool canSlashWithoutCrossbow() const;

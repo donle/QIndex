@@ -179,8 +179,16 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
             player = room->getCurrent();
             if(!player->faceUp())
                 player->turnOver();
-            else if(player->isAlive())
-                player->play();
+            else if(player->isAlive()){
+                if(player->hasFlag("freezed")){
+                    room->setPlayerFlag(player, "-freezed");
+                    QList<Player::Phase> phases;
+                    phases << Player::Draw;
+                    player->play(phases);
+                }
+                else
+                    player->play();
+            }
 
             break;
         }
@@ -393,7 +401,6 @@ bool GameRule::trigger(TriggerEvent event, ServerPlayer *player, QVariant &data)
 
     case SlashHit:{
             SlashEffectStruct effect = data.value<SlashEffectStruct>();
-
             DamageStruct damage;
             damage.card = effect.slash;
 

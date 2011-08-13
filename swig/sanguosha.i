@@ -165,6 +165,7 @@ public:
     void removeMark(const char *mark);
     virtual void setMark(const char *mark, int value);
     int getMark(const char *mark) const;
+	void removeAllMarks();
 
     void setChained(bool chained);
     bool isChained() const;
@@ -382,6 +383,7 @@ enum TriggerEvent{
     HpRecover,
 	HpLost,
 	HpChanged,
+	DrawCardsDone,
 
 	StartJudge,
 	AskForRetrial,
@@ -417,6 +419,8 @@ enum TriggerEvent{
     CardEffect,
     CardEffected,
     CardFinished,
+	
+	TurnOverDone,
 
 	ChoiceMade,
 };

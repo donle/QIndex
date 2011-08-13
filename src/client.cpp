@@ -515,6 +515,8 @@ void Client::hpChange(const QString &change_str){
         nature = DamageStruct::Fire;
     else if(nature_str == "T")
         nature = DamageStruct::Thunder;
+    else if(nature_str == "FR")
+        nature = DamageStruct::Thunder;
     else
         nature = DamageStruct::Normal;
 

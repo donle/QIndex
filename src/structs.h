@@ -19,7 +19,8 @@ struct DamageStruct{
     enum Nature{
         Normal, // normal slash, duel and most damage caused by skill
         Fire,  // fire slash, fire attack and few damage skill (Yeyan, etc)
-        Thunder // lightning, thunder slash, and few damage skill (Leiji, etc)
+        Thunder, // lightning, thunder slash, and few damage skill (Leiji, etc)
+        Freeze // freeze slash, does not make damage, the victim skip all phases except drawcards
     };
 
     ServerPlayer *from;
@@ -121,6 +122,7 @@ enum TriggerEvent{
     HpRecover,
     HpLost,
     HpChanged,
+    DrawCardsDone,
 
     StartJudge,
     AskForRetrial,
@@ -157,6 +159,9 @@ enum TriggerEvent{
     CardEffect,
     CardEffected,
     CardFinished,
+
+    TurnOverDone,
+
 
     ChoiceMade,
 };

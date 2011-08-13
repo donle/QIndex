@@ -6,6 +6,14 @@
 #include "roomthread.h"
 #include "skill.h"
 #include "standard.h"
+#include "maneuvering.h"
+
+class FreezeSlash: public NatureSlash{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE FreezeSlash(Card::Suit suit, int number);
+};
 
 class Coin: public Weapon{
     Q_OBJECT

@@ -4,6 +4,11 @@
 #include "engine.h"
 #include "carditem.h"
 
+FreezeSlash::FreezeSlash(Card::Suit suit, int number)
+    :NatureSlash(suit, number, DamageStruct::Freeze){
+    setObjectName("freeze_slash");
+}
+
 class CoinSkill: public WeaponSkill{
 public:
     CoinSkill():WeaponSkill("coin"){
@@ -65,6 +70,7 @@ public:
 
             Card *new_card = Card::Clone(judge->card);
             new_card->setSuit(Card::Club);
+            new_card->setSkillName("arche");
             judge->card = new_card;
         }
         return false;
@@ -430,6 +436,16 @@ void Recycle::onEffect(const CardEffectStruct &effect) const{
 void IndexPackage::addCards(){
     QList<Card *> cards;
 
+    cards << new FreezeSlash(Card::Diamond, 12)
+          << new FreezeSlash(Card::Diamond, 3)
+          << new FreezeSlash(Card::Diamond, 9)
+          << new FreezeSlash(Card::Diamond, 9)
+          << new FreezeSlash(Card::Heart, 9)
+          << new FreezeSlash(Card::Heart, 2)
+          << new FreezeSlash(Card::Spade, 3)
+          << new FreezeSlash(Card::Spade, 2)
+          << new FreezeSlash(Card::Spade, 3);
+
     cards << new FourArea(Card::Spade, 13)
           << new FourArea(Card::Club, 13)
           << new FourArea(Card::Diamond, 13)
@@ -441,12 +457,12 @@ void IndexPackage::addCards(){
           << new Arche(Card::Club, 1)
           << new SevenMoment(Card::Heart, 1)
           << new Rune(Card::Diamond, 1)
-          << new FoldingFan(Card::Club, 10)
+          << new FoldingFan(Card::Club, 12)
           << new Lily(Card::Club, 9)
           << new FireSword(Card::Heart, 12)
           << new Origin(Card::Club, 3);
 
-    cards << new Costume(Card::Club, 7);
+    cards << new Costume(Card::Club, 12);
 
     foreach(Card *card, cards)
         card->setParent(this);

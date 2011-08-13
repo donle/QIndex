@@ -29,6 +29,16 @@ class QGroupBox;
 #include <QGraphicsProxyWidget>
 #include <QThread>
 
+class AnimatedGraphicsItem : public QObject, public QGraphicsItem
+{
+    Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+public:
+    void fadeTo(qreal op,int duration = 300);
+    static void FadeItemTo(QGraphicsItem* item,qreal op, int duration = 300);
+};
+
 class DeathNoteDialog: public QDialog{
     Q_OBJECT
 
@@ -252,6 +262,7 @@ private:
     void doMovingAnimation(const QString &name, const QStringList &args);
     void doAppearingAnimation(const QString &name, const QStringList &args);
     void doLightboxAnimation(const QString &name, const QStringList &args);
+    void doHuashen(const QString &name, const QStringList &args);
 
 private slots:
     void updateSkillButtons();
@@ -267,6 +278,7 @@ private slots:
     void doTimeout();
     void hideAvatars();
     void changeHp(const QString &who, int delta, DamageStruct::Nature nature);
+    void changeMp(const QString &who, int delta);
     void moveFocus(const QString &who);
     void setEmotion(const QString &who, const QString &emotion);
     void showSkillInvocation(const QString &who, const QString &skill_name);
@@ -309,6 +321,9 @@ private slots:
 
     void doGongxin(const QList<int> &card_ids, bool enable_heart);
 
+    void startAssign();
+    void finishAssign();
+
     // 3v3 mode & 1v1 mode
     void fillGenerals(const QStringList &names);
     void takeGeneral(const QString &who, const QString &name);
@@ -324,5 +339,7 @@ private slots:
 signals:
     void restart();
 };
+
+
 
 #endif // ROOMSCENE_H

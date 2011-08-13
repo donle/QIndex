@@ -59,6 +59,7 @@ return {
 	["$PasteCard"] = "%from 给 %to 贴了张 %card", 
 	["$LightningMove"] = "%card 从 %from 移动到 %to", 
 	["$DiscardCard"] = "%from 弃了 %card", 
+	["$Discarded"] = "%from 弃掉了 %card",
 	["$RecycleCard"] = "%from 从弃牌堆回收了 %card", 
 	["$ShowCard"] = "%from 展示了 %card", 
 	["$PutCard"] = "%from 的 %card 被放置在了摸牌堆", 

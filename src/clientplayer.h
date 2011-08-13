@@ -41,6 +41,7 @@ signals:
     void pile_changed(const QString &name);
     void drank_changed();
     void action_taken();
+    void freeze_changed();
 };
 
 extern ClientPlayer *Self;

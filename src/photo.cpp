@@ -193,6 +193,13 @@ void Photo::setDrankState(){
         avatar_area->setBrush(Qt::NoBrush);
 }
 
+void Photo::setFreezeState(){
+    if(player->hasFlag("freezed"))
+        avatar_area->setBrush(QColor(0x64, 0x95, 0xED, 255 * 0.45));
+    else
+        avatar_area->setBrush(Qt::NoBrush);
+}
+
 void Photo::setActionState(){
     if(action_item == NULL){
         action_item = new QGraphicsPixmapItem(this);
@@ -231,6 +238,7 @@ void Photo::setPlayer(const ClientPlayer *player)
         connect(player, SIGNAL(state_changed()), this, SLOT(refresh()));
         connect(player, SIGNAL(phase_changed()), this, SLOT(updatePhase()));
         connect(player, SIGNAL(drank_changed()), this, SLOT(setDrankState()));
+        connect(player, SIGNAL(freeze_changed()), this, SLOT(setFreezeState()));
         connect(player, SIGNAL(action_taken()), this, SLOT(setActionState()));
         connect(player, SIGNAL(pile_changed(QString)), this, SLOT(updatePile(QString)));
 

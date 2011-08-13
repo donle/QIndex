@@ -108,6 +108,9 @@ void ServerPlayer::drawCards(int n, bool set_emotion){
 
     if(set_emotion)
         room->setEmotion(this, "draw-card");
+
+    QVariant data = QVariant::fromValue(n);
+    room->getThread()->trigger(DrawCardsDone, this, data);
 }
 
 // a convenient way to ask player
@@ -414,6 +417,9 @@ void ServerPlayer::turnOver(){
     log.from = this;
     log.arg = faceUp() ? "face_up" : "face_down";
     room->sendLog(log);
+
+    QVariant data = QVariant::fromValue(faceUp());
+    room->getThread()->trigger(TurnOverDone, this, data);
 }
 
 void ServerPlayer::play(){
@@ -423,7 +429,18 @@ void ServerPlayer::play(){
                 << Discard << Finish << NotActive;
     }
 
+    this->prePlay(all_phases);
+}
+
+void ServerPlayer::play(QList<Player::Phase> &set_phases){
+    this->prePlay(set_phases);
+}
+
+void ServerPlayer::prePlay(QList<Player::Phase> &all_phases){
     phases = all_phases;
+    if(!phases.contains(Player::NotActive))
+        phases << Player::NotActive;
+
     while(!phases.isEmpty()){
         Phase phase = phases.takeFirst();
         setPhase(phase);
@@ -680,6 +697,18 @@ void ServerPlayer::marshal(ServerPlayer *player) const{
         if(value > 0)
             player->invoke("addHistory", QString("%1#%2").arg(item).arg(value));
     }
+}
+
+void ServerPlayer::resetProperty(ServerPlayer *player) const{
+    if(player->isChained())
+        room->setPlayerProperty(player, "chained", false);
+    if(!player->faceUp())
+        player->setFaceUp(true);
+    if(player->getFlags().length() > 0)
+        player->clearFlags();
+
+    player->removeAllMarks();
+    player->clearTempData(true);
 }
 
 void ServerPlayer::addToPile(const QString &pile_name, int card_id, bool open){

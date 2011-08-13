@@ -968,7 +968,7 @@ public:
     }
 
     virtual bool triggerable(const ServerPlayer *target) const{
-        return target->getMark("exchanged") > 2;
+        return target->getMark("exchanged") > 4;
     }
 
     virtual bool trigger(TriggerEvent , ServerPlayer *player, QVariant &data) const{
@@ -1687,8 +1687,16 @@ public:
         room->broadcastInvoke("clearAG");
 
         const Card *card = Sanguosha->getCard(card_id);
+        Slash *slash = new Slash(card->getSuit(), card->getNumber());
+        slash->setNature(DamageStruct::Fire);
 
-        ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
+        QList<ServerPlayer *> targets;
+        foreach(ServerPlayer *t, room->getOtherPlayers(player)){
+            if(!t->isProhibited(player, slash))
+                targets << t;
+        }
+
+        ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
         QString choice = room->askForChoice(target, objectName(), "yes+no");
 
         if(choice == "no"){
@@ -1699,8 +1707,6 @@ public:
             log.arg = card->objectName();
             room->sendLog(log);
 
-            Slash *slash = new Slash(card->getSuit(), card->getNumber());
-            slash->setNature(DamageStruct::Fire);
             CardUseStruct use;
             slash->setSkillName(objectName());
             use.card = slash;
@@ -1728,6 +1734,8 @@ public:
                 damage.nature = DamageStruct::Fire;
 
                 room->damage(damage);
+
+                room->throwCard(card_id);
             }
             else{
                 room->moveCardTo(card, target, Player::Hand, false);

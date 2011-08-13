@@ -114,7 +114,14 @@ bool Player::hasFlag(const QString &flag) const{
 }
 
 void Player::clearFlags(){
+    bool freeze_keep = false;
+    if(flags.contains("freezing_keep"))
+        freeze_keep = true;
+
     flags.clear();
+
+    if(freeze_keep)
+        flags.insert("freezed");
 }
 
 void Player::setAttackRange(int attack_range){
@@ -514,6 +521,10 @@ void Player::removeMark(const QString &mark){
     setMark(mark, value);
 }
 
+void Player::removeAllMarks(){
+    marks.clear();
+}
+
 void Player::setMark(const QString &mark, int value){
     if(marks[mark] != value){
         marks[mark] = value;
@@ -586,7 +597,8 @@ void Player::addHistory(const QString &name, int times){
 int Player::getSlashCount() const{
     return history.value("Slash", 0)
             + history.value("ThunderSlash", 0)
-            + history.value("FireSlash", 0);
+            + history.value("FireSlash", 0)
+            + history.value("FreezeSlash", 0);
 }
 
 void Player::clearHistory(){
@@ -637,6 +649,10 @@ QList<const Skill *> Player::getVisibleSkillList() const{
     }
 
     return skills;
+}
+
+QSet<QString> Player::getAcquiredSkills() const{
+    return acquired_skills;
 }
 
 bool Player::isProhibited(const Player *to, const Card *card) const{

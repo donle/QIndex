@@ -49,6 +49,9 @@ public:
     bool pindian(ServerPlayer *target, const QString &reason, const Card *card1 = NULL);
     void turnOver();
     void play();
+    void play(QList<Player::Phase> &set_phases);
+
+    void prePlay(QList<Player::Phase> &all_phases);
 
     QList<Player::Phase> &getPhases();
     void skip(Player::Phase phase);
@@ -87,6 +90,8 @@ public:
     QString getIp() const;
     void introduceTo(ServerPlayer *player);
     void marshal(ServerPlayer *player) const;
+
+    void resetProperty(ServerPlayer *player) const;
 
     void addToPile(const QString &pile_name, int card_id, bool open = true);
 
