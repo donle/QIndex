@@ -310,9 +310,6 @@ bool SupplyShortage::targetFilter(const QList<const Player *> &targets, const Pl
     if(to_select->containsTrick(objectName()))
         return false;
 
-    if(Self->hasSkill("qicai") || Self->hasSkill("weiyuanwuzhi"))
-        return true;
-
     if(Self->hasSkill("kongjianyidong"))
         return true;
 

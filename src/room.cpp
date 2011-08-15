@@ -624,6 +624,9 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
         QVariant decisionData = QVariant::fromValue("cardResponsed:"+pattern+":"+prompt+":_"+card->toString()+"_");
         thread->trigger(ChoiceMade, player, decisionData);
 
+        CardStar card_ptr = card;
+        QVariant card_star = QVariant::fromValue(card_ptr);
+
         if(!card->inherits("DummyCard") && !pattern.startsWith(".")){
             LogMessage log;
             log.card_str = card->toString();
@@ -633,10 +636,12 @@ const Card *Room::askForCard(ServerPlayer *player, const QString &pattern, const
 
             player->playCardEffect(card);
 
-            CardStar card_ptr = card;
-            QVariant card_star = QVariant::fromValue(card_ptr);
+
             thread->trigger(CardResponsed, player, card_star);
+        }else{
+            thread->trigger(CardDiscarded, player, card_star);
         }
+
     }else if(continuable)
         return askForCard(player, pattern, prompt, throw_it);
 
@@ -2888,4 +2893,29 @@ void Room::selectRoleCommand(ServerPlayer *player, const QString &arg){
         result = "abstained";
 
     sem->release();
+}
+
+int Room::doHandcardsChosen(ServerPlayer *player, QList<int> &cards_enable, const QString &reason){
+/*    QList<const Card *> cards = player->getHandcards();
+    QList<int> handcards;
+    foreach(const Card *card, cards)
+        handcards << card->getEffectiveId();
+    fillAG(handcards, player);
+    foreach(int id, handcards){
+        if(!cards_enable.contains(id)){
+            player->removeCard(Sanguosha->getCard(id), Player::Hand);
+            setCardMapping(id, player, Player::Hand);
+            takeAG(player, id);
+        }
+    }
+
+    int card_id = askForAG(player, handcards, true, reason);
+    broadcastInvoke("clearAG");
+
+*/
+    fillAG(cards_enable, player);
+    int card_id = askForAG(player, cards_enable, true, reason);
+    broadcastInvoke("clearAG");
+
+    return card_id;
 }

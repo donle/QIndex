@@ -146,6 +146,8 @@ public:
     QString askForGeneral(ServerPlayer *player, const QStringList &generals);
     const Card *askForSinglePeach(ServerPlayer *player, ServerPlayer *dying);
 
+    int doHandcardsChosen(ServerPlayer *player, QList<int> &cards_enable, const QString &reason);
+
     void speakCommand(ServerPlayer *player, const QString &arg);
     void trustCommand(ServerPlayer *player, const QString &arg);
     void kickCommand(ServerPlayer *player, const QString &arg);

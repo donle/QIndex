@@ -1355,6 +1355,35 @@ public:
     }
 };
 
+class Wuzhi: public MasochismSkill{
+public:
+    Wuzhi():MasochismSkill("weiyuanwuzhi"){
+        frequency = Frequent;
+    }
+
+    virtual void onDamaged(ServerPlayer *target, const DamageStruct &damage) const{
+        Room *room = target->getRoom();
+        if(!room->askForSkillInvoke(target, objectName()))
+            return;
+
+        QString choice = room->askForChoice(target, objectName(), "getmark+exniliho");
+        if(choice == "getmark")
+            target->gainMark("@wings", 2);
+        else{
+            if(target->getMark("@wings") < 2)
+                return;
+
+            ExNihilo *_ex = new ExNihilo(Card::NoSuit, 0);
+            target->loseMark("@wings", 2);
+            CardUseStruct use;
+            use.card = _ex;
+            use.from = target;
+            use.to << target;
+            room->useCard(use);
+        }
+    }
+};
+
 class BaiyiStart: public GameStartSkill{
 public:
     BaiyiStart():GameStartSkill("#baiyi"){
@@ -2185,13 +2214,15 @@ public:
             DamageStruct damage = data.value<DamageStruct>();
             if(room->askForSkillInvoke(player, objectName())){
                 damage.to->gainMark("@add", damage.damage);
+
+                room->getThread()->trigger(DamageComplete, player, data);
                 return true;
             }
             else{
-                if(player->getMark("@add") > 0){
+                if(damage.to->getMark("@add") > 0){
                     damage.damage += damage.to->getMark("@add");
                     data = QVariant::fromValue(damage);
-                    player->loseAllMarks("@add");
+                    damage.to->loseAllMarks("@add");
                 }
             }
         }else if(event == SlashEffect){
@@ -3259,26 +3290,37 @@ void SuqingCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
 
 
     foreach(ServerPlayer *p, others){
-        p->setTempData(p, number);
-        const Card * card = room->askForCard(p, ".suqing", "@suqing-card", false);
+        room->setPlayerMark(p, "suqing", number);
+ /*       const Card * card = room->askForCard(p, ".suqing", "@suqing-card", false);
         if(card){
             number = card->getNumber();
             room->throwCard(card->getEffectiveId(), true);
         }
         else
             room->loseHp(p);
+*/
+        QList<int> cards_id;
+        foreach(const Card *card, p->getHandcards()){
+            if(card->getNumber() >= number)
+                cards_id << card->getEffectiveId();
+        }
 
-        p->clearTempData(true);
-
-        room->output(QString::number(number));
+        int card_id = room->doHandcardsChosen(p, cards_id, objectName());
+        if(card_id == -1)
+            room->loseHp(p);
+        else{
+            const Card *card = Sanguosha->getCard(card_id);
+            number = card->getNumber();
+            room->throwCard(card_id, true);
+        }
+        p->removeMark("suqing");
     }
 }
 
 class SkillPattern: public CardPattern{
 public:
     virtual bool match(const Player *player, const Card *card) const{
-        QList<int> values = player->getTempData(player);
-        int number = values.last();
+        int number = player->getMark("suqing");
         return card->getNumber() >= number;
     }
 };
@@ -3388,6 +3430,129 @@ public:
                 int n = meimei->getMark("net_maxhp")-meimei->getMark("net_hp");
                 n += meimei->getLostHp();
                 meimei->drawCards(qMax(n, 1));
+            }
+        }
+
+        return false;
+    }
+};
+
+class NaoliPattern: public CardPattern{
+public:
+    virtual bool match(const Player *player, const Card *card) const{
+        QList<int> values = player->getTempData(player);
+
+        return values.contains(card->getEffectiveId());
+    }
+};
+
+class Chaonaoli: public TriggerSkill{
+public:
+    Chaonaoli(): TriggerSkill("chaonaoli"){
+        events << DrawCardsDone;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        Room *room = player->getRoom();
+        if(room->getTag("FirstRound").toBool())
+            return false;
+        if(!player->faceUp() || !room->askForSkillInvoke(player, objectName()))
+            return false;
+
+        int n = data.toInt();
+        QList<int> cards_id = player->handCards().mid(player->getHandcardNum() - n);
+
+        int id = room->doHandcardsChosen(player, cards_id, objectName());
+        if(id != -1){
+            room->throwCard(id, true);
+
+            ServerPlayer *target = room->askForPlayerChosen(player, room->getOtherPlayers(player), objectName());
+            QString choice = room->askForChoice(player, objectName(), "judge+draw+play+discard");
+            if(choice == "judge")
+                target->setFlags("naoli_judge");
+            else if(choice == "draw")
+                target->setFlags("naoli_draw");
+            else if(choice == "play")
+                target->setFlags("naoli_play");
+            else if(choice == "discard")
+                target->setFlags("naoli_discard");
+
+            target->gainMark("@brain");
+
+            LogMessage log;
+            log.type = "#NaoliUsed";
+            log.from = player;
+            log.to << target;
+            log.arg = choice;
+
+            player->turnOver();
+        }
+
+        return false;
+    }
+};
+
+class NaoliEffect: public TriggerSkill{
+public:
+    NaoliEffect(): TriggerSkill("#naoli-effect"){
+        events << PhaseChange;
+        frequency = Compulsory;
+    }
+
+    virtual bool triggerable(const ServerPlayer *target) const{
+        return target->getMark("@brain") > 0;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        if(player->getPhase() != Player::Start)
+            return false;
+
+        if(player->hasFlag("naoli_judge"))
+            player->skip(Player::Judge);
+        else if(player->hasFlag("naoli_draw"))
+            player->skip(Player::Draw);
+        else if(player->hasFlag("naoli_play"))
+            player->skip(Player::Play);
+        else if(player->hasFlag("naoli_discard"))
+            player->skip(Player::Discard);
+
+        player->loseAllMarks("@brain");
+        return false;
+    }
+};
+
+class Shenquan: public TriggerSkill{
+public:
+    Shenquan(): TriggerSkill("muyuanshenquan"){
+        events << TurnOverDone;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &) const{
+        Room *room = player->getRoom();
+        if(!player->faceUp() || !room->askForSkillInvoke(player, objectName()))
+            return false;
+
+        CardUseStruct card_use;
+        room->activate(player, card_use);
+        if(card_use.isValid()){
+            room->useCard(card_use);
+
+            QList<ServerPlayer *> targets;
+            foreach(ServerPlayer *p, room->getOtherPlayers(player))
+                if(p->getWeapon() != NULL)
+                    targets << p;
+
+            QString choice = room->askForChoice(player, objectName(), "weapon+drawone");
+
+            if(choice == "drawone")
+                player->drawCards(1);
+            else{
+                if(targets.isEmpty())
+                    return false;
+
+                ServerPlayer *target = room->askForPlayerChosen(player, targets, objectName());
+                const Weapon *weapon = target->getWeapon();
+                room->throwCard(weapon->getEffectiveId(), true);
             }
         }
 
@@ -3513,7 +3678,7 @@ IndexPackage::IndexPackage()
     aizhali->addSkill(new Gun);
 
     General *didu = new General(this, "didu", "darkness", 3);
-    didu->addSkill(new Skill("weiyuanwuzhi", Skill::Compulsory, "didu"));
+    didu->addSkill(new Wuzhi);
     didu->addSkill(new Baiyi);
     didu->addSkill(new BaiyiStart);
     didu->addSkill(new BaiyiUse);
@@ -3538,6 +3703,11 @@ IndexPackage::IndexPackage()
     General *weizhi = new General(this, "weizhi", "darkness", 4, false);
     weizhi->addSkill(new Dinggui);
     weizhi->addSkill(new DingguiClear);
+
+    General *muyuan = new General(this, "muyuan", "darkness");
+    muyuan->addSkill(new Chaonaoli);
+    muyuan->addSkill(new NaoliEffect);
+    muyuan->addSkill(new Shenquan);
 
  /////////////////////////////////////////////////////////////////////////////////////
 
@@ -3587,6 +3757,7 @@ IndexPackage::IndexPackage()
     di->addSkill(new Chuxing);
 
     patterns[".suqing"] = new SkillPattern;
+    patterns[".naoli"] = new NaoliPattern;
 
     addMetaObject<BeiciCard>();
     addMetaObject<ShenyinCard>();

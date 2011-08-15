@@ -747,7 +747,7 @@ bool Snatch::targetFilter(const QList<const Player *> &targets, const Player *to
         return false;
 
     if(Self->distanceTo(to_select) > 1 &&
-       !(Self->hasSkill("weiyuanwuzhi") || Self->hasSkill("qicai") || Self->hasSkill("kongjianyidong")))
+       !(Self->hasSkill("qicai") || Self->hasSkill("kongjianyidong")))
         return false;
 
     return true;
@@ -779,9 +779,6 @@ bool Dismantlement::targetFilter(const QList<const Player *> &targets, const Pla
         return false;
 
     if(to_select == Self)
-        return false;
-
-    if(Self->hasSkill("weiyuanwuzhi") && Self->distanceTo(to_select) > 1)
         return false;
 
     return true;
@@ -816,9 +813,6 @@ bool Indulgence::targetFilter(const QList<const Player *> &targets, const Player
         return false;
 
     if(to_select == Self)
-        return false;
-
-    if(Self->hasSkill("weiyuanwuzhi") && Self->distanceTo(to_select) > 1)
         return false;
 
     return true;
