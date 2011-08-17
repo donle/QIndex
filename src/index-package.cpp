@@ -1374,6 +1374,7 @@ public:
                 return;
 
             ExNihilo *_ex = new ExNihilo(Card::NoSuit, 0);
+            _ex->setSkillName(objectName());
             target->loseMark("@wings", 2);
             CardUseStruct use;
             use.card = _ex;
@@ -3305,7 +3306,12 @@ void SuqingCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer 
                 cards_id << card->getEffectiveId();
         }
 
-        int card_id = room->doHandcardsChosen(p, cards_id, objectName());
+        int card_id = -1;
+        if(cards_id.isEmpty())
+            room->askForCard(p, "null", "@suqing-card", false);
+        else
+            card_id = room->doHandcardsChosen(p, cards_id, objectName());
+
         if(card_id == -1)
             room->loseHp(p);
         else{

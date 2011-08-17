@@ -66,7 +66,9 @@ public:
     void checkVersion(const QString &server_version);
     void setup(const QString &setup_str);
     void addPlayer(const QString &player_info);
+    void introduceSelf(const QString &hash_name);
     void removePlayer(const QString &player_name);
+    void removeSpeak(const QString &hash_name);
     void drawCards(const QString &cards_str);
     void drawNCards(const QString &draw_str);
     void doChooseGeneral(const QString &generals_str);
@@ -185,6 +187,7 @@ private:
     QString choose_command;
     QString card_pattern;
     int swap_pile;
+    QList<QString> screen_names;
 
     void updatePileNum();
     void setPromptList(const QStringList &text);

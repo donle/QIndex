@@ -47,8 +47,8 @@ void StartScene::setServerLogBackground(){
     if(server_log){
         // make its background the same as background, looks transparent
         QPalette palette;
-        palette.setBrush(QPalette::Base, backgroundBrush());
         server_log->setPalette(palette);
+        server_log->setStyleSheet("background-color: rgba(145, 145, 145, 30%)");
     }
 }
 

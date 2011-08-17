@@ -1145,6 +1145,9 @@ void Room::reportDisconnection(){
             player->setParent(NULL);
             players.removeOne(player);
 
+            QString screen_name = Config.ContestMode ? tr("Contestant") : player->screenName();
+            broadcastInvoke("removeSpeak", QString(screen_name.toUtf8().toBase64()));
+
             broadcastInvoke("removePlayer", player->objectName());
             signup_count --;
         }
@@ -1311,6 +1314,7 @@ void Room::signup(ServerPlayer *player, const QString &screen_name, const QStrin
 
     // introduce the new joined player to existing players except himself
     player->introduceTo(NULL);
+    player->introduceSelf();
 
     if(!is_robot){
         // introduce all existing player to the new joined
@@ -1713,6 +1717,10 @@ void Room::damage(const DamageStruct &damage_data){
     // damage done, should not cause damage process broken
     thread->trigger(DamageDone, damage_data.to, data);
 
+    //damage is freezing damage, will not lose hp
+    if(damage_data.nature == DamageStruct::Freeze)
+        goto no_hurt;
+
     // damage
     if(damage_data.from){
         bool broken = thread->trigger(Damage, damage_data.from, data);
@@ -1720,10 +1728,15 @@ void Room::damage(const DamageStruct &damage_data){
             return;
     }
 
+    //analeptic done after damage
+    setPlayerFlag(damage_data.from, "-drank");
+
     // damaged
     broken = thread->trigger(Damaged, damage_data.to, data);
     if(broken)
         return;
+
+    no_hurt:
 
     thread->trigger(DamageComplete, damage_data.to, data);
 }
@@ -1732,8 +1745,12 @@ void Room::sendDamageLog(const DamageStruct &data){
     LogMessage log;
 
     if(data.from){
-        log.type = "#Damage";
-        log.from = data.from;
+        if(data.nature == DamageStruct::Freeze)
+            return;
+        else{
+            log.type = "#Damage";
+            log.from = data.from;
+        }
     }else{
         log.type = "#DamageNoSource";
     }

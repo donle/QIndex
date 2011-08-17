@@ -169,7 +169,7 @@ public:
                     draw_card = true;
                 else{
                     QString prompt = "double-sword-card:" + effect.from->getGeneralName();
-                    const Card *card = room->askForCard(effect.to, ".", prompt);
+                    const Card *card = room->askForCard(effect.to, ".", prompt, false);
                     if(card){
                         room->throwCard(card, true);
                     }else

@@ -29,7 +29,9 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["checkVersion"] = &Client::checkVersion;
     callbacks["setup"] = &Client::setup;
     callbacks["addPlayer"] = &Client::addPlayer;
+    callbacks["introduceSelf"] = &Client::introduceSelf;
     callbacks["removePlayer"] = &Client::removePlayer;
+    callbacks["removeSpeak"] = &Client::removeSpeak;
     callbacks["startInXs"] = &Client::startInXs;
     callbacks["arrangeSeats"] = &Client::arrangeSeats;
     callbacks["warn"] = &Client::warn;
@@ -277,6 +279,15 @@ void Client::addPlayer(const QString &player_info){
     emit player_added(player);
 }
 
+void Client::introduceSelf(const QString &hash_name){
+    QString base64 = hash_name;
+    QByteArray data = QByteArray::fromBase64(base64.toAscii());
+    QString screen_name = QString::fromUtf8(data);
+
+    QString player_in = tr("<font color=#EEB422>Player <b>%1</b> add in the game</font>").arg(screen_name);
+    speakToServer(player_in);
+}
+
 void Client::removePlayer(const QString &player_name){
     ClientPlayer *player = findChild<ClientPlayer*>(player_name);
     if(player){
@@ -286,6 +297,15 @@ void Client::removePlayer(const QString &player_name){
 
         emit player_removed(player_name);
     }
+}
+
+void Client::removeSpeak(const QString &hash_name){
+    QString base64 = hash_name;
+    QByteArray data = QByteArray::fromBase64(base64.toAscii());
+    QString screen_name = QString::fromUtf8(data);
+
+    QString player_out = tr("<font color=#000000>Player <b>%1</b> leave the game</font>").arg(screen_name);
+    speakToServer(player_out);
 }
 
 void Client::drawCards(const QString &cards_str){
