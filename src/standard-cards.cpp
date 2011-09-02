@@ -11,6 +11,7 @@ Slash::Slash(Suit suit, int number): BasicCard(suit, number)
 {
     setObjectName("slash");
     nature = DamageStruct::Normal;
+    drank = false;
 }
 
 DamageStruct::Nature Slash::getNature() const{
@@ -56,9 +57,8 @@ void Slash::onEffect(const CardEffectStruct &card_effect) const{
     effect.from = card_effect.from;
     effect.nature = nature;
     effect.slash = this;
-
+    effect.drank = card_effect.from->hasFlag("drank");
     effect.to = card_effect.to;
-    effect.drank = effect.from->hasFlag("drank");
     effect.ex_damage = 0;
 
     room->slashEffect(effect);
@@ -73,6 +73,8 @@ bool Slash::targetFilter(const QList<const Player *> &targets, const Player *to_
     if(Self->hasWeapon("halberd") && Self->isLastHandCard(this)){
         slash_targets = 3;
     }
+
+    slash_targets += Self->getMark("weishan_used");
 
     bool distance_limit = true;
 

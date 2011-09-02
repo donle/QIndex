@@ -312,6 +312,12 @@ public:
 
     static bool IsAvailable(const Player *player);
 
+    void setDrank(bool has_drank);
+    bool getDrank() const;
+
+private:
+    bool drank;
+
 protected:
     DamageStruct::Nature nature;
 };

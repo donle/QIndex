@@ -114,7 +114,7 @@ void RoomThread::addPlayerSkills(ServerPlayer *player, bool invoke_game_start){
 
     foreach(const TriggerSkill *skill, player->getTriggerSkills()){
         if(skill->isLordSkill()){
-            if(!player->isLord() || room->mode == "06_3v3")
+            if(!player->isLord() || room->mode == "06_3v3" || room->mode == "02_1v1")
                 continue;
         }
 

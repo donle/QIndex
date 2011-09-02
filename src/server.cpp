@@ -211,7 +211,16 @@ QGroupBox *ServerDialog::createGameModeBox(){
             QRadioButton *button = new QRadioButton(itor.value());
             button->setObjectName(itor.key());
             mode_group->addButton(button);
+/*
+            if(itor.key() == "02_1v1"){
+                // add 1v1 banlist edit button
+                QPushButton *edit_button = new QPushButton(tr("Banlist ..."));
+                connect(edit_button, SIGNAL(clicked()), this, SLOT(edit1v1Banlist()));
+                layout->addLayout(HLay(button, edit_button));
 
+            }
+            else
+            */
             if(itor.key() == "06_3v3"){
                 // add 3v3 options
                 QGroupBox *box = create3v3Box();
@@ -581,8 +590,7 @@ void Select3v3GeneralDialog::fillListWidget(QListWidget *list, const Package *pa
 
         bool checked = false;
         if(ex_generals.isEmpty()){
-            checked = pack->objectName() == "standard" || pack->objectName() == "wind"
-                      || general->objectName() == "xiaoqiao";
+            checked = pack->objectName() == "Index";
         }else
             checked = ex_generals.contains(general->objectName());
 

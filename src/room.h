@@ -54,6 +54,7 @@ public:
     void setPlayerFlag(ServerPlayer *player, const QString &flag);
     void setPlayerProperty(ServerPlayer *player, const char *property_name, const QVariant &value);
     void setPlayerMark(ServerPlayer *player, const QString &mark, int value);
+    void setPlayerAttackRange(ServerPlayer *player, int range);
     void useCard(const CardUseStruct &card_use, bool add_history = true);
     void damage(const DamageStruct &data);
     void sendDamageLog(const DamageStruct &data);

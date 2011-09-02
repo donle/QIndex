@@ -88,6 +88,7 @@ public:
     void revivePlayer(const QString &player_name);
     void warn(const QString &);
     void setMark(const QString &mark_str);
+    void setAttackRange(const QString &set_range);
     void showCard(const QString &show_str);
     void doGuanxing(const QString &guanxing_str);
     void doGongxin(const QString &gongxin_str);

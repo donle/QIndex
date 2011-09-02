@@ -285,7 +285,7 @@ public:
 
     virtual bool viewFilter(const CardItem *to_select) const{
         const Card *card = to_select->getFilteredCard();
-        return card->inherits("ThunderSlash") || card->inherits("FireSlash");
+        return card->inherits("NatureSlash");
     }
 
     virtual const Card *viewAs(CardItem *card_item) const{

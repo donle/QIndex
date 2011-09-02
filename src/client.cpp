@@ -44,6 +44,7 @@ Client::Client(QObject *parent, const QString &filename)
     callbacks["revivePlayer"] = &Client::revivePlayer;
     callbacks["showCard"] = &Client::showCard;
     callbacks["setMark"] = &Client::setMark;
+    callbacks["setAttackRange"] = &Client::setAttackRange;
     callbacks["log"] = &Client::log;
     callbacks["speak"] = &Client::speak;
     callbacks["acquireSkill"] = &Client::acquireSkill;
@@ -1177,6 +1178,20 @@ void Client::setMark(const QString &mark_str){
 
     ClientPlayer *player = getPlayer(who);
     player->setMark(mark, value);
+}
+
+void Client::setAttackRange(const QString &set_range){
+    QRegExp rx("(\\w+)=(\\d+)");
+
+    if(!rx.exactMatch(set_range))
+        return;
+
+    QStringList texts = rx.capturedTexts();
+    QString who = texts.at(1);
+    int attack_range = texts.at(2).toInt();
+
+    ClientPlayer *player = getPlayer(who);
+    player->setAttackRange(attack_range);
 }
 
 void Client::chooseSuit(){

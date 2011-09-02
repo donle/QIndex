@@ -3131,6 +3131,7 @@ void RoomScene::doHuashen(const QString &name, const QStringList &args){
 void RoomScene::doAnimation(const QString &name, const QStringList &args){
     static QMap<QString, AnimationFunc> map;
     if(map.isEmpty()){
+        map["slash"] = &RoomScene::doMovingAnimation;
         map["peach"] = &RoomScene::doMovingAnimation;
         map["nullification"] = &RoomScene::doMovingAnimation;
 

@@ -547,8 +547,12 @@ bool Player::canSlash(const Player *other, bool distance_limit) const{
     if(this->hasSkill("lingkonglishi"))
         attack_range++;
 
-    if(this->hasSkill("niandongpaodan"))
-        return !this->inMyAttackRange(other);
+    if(this->hasSkill("niandongpaodan")){
+        if(this->hasFlag("hunluan_slash"))
+            return distanceTo(other) > 1;
+        else
+            return !this->inMyAttackRange(other);
+    }
 
     if(distance_limit)
         return distanceTo(other) <= attack_range;

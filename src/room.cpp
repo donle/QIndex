@@ -790,6 +790,11 @@ void Room::setPlayerMark(ServerPlayer *player, const QString &mark, int value){
     broadcastInvoke("setMark", QString("%1.%2=%3").arg(player->objectName()).arg(mark).arg(value));
 }
 
+void Room::setPlayerAttackRange(ServerPlayer *player, int range){
+    player->setAttackRange(range);
+    broadcastInvoke("setAttackRange", QString("%1=%2").arg(player->objectName()).arg(range));
+}
+
 ServerPlayer *Room::addSocket(ClientSocket *socket){
     ServerPlayer *player = new ServerPlayer(this);
     player->setSocket(socket);
@@ -1123,6 +1128,9 @@ void Room::reportDisconnection(){
     if(player == NULL)
         return;
 
+    QString screen_name = Config.ContestMode ? tr("Contestant") : player->screenName();
+    broadcastInvoke("removeSpeak", QString(screen_name.toUtf8().toBase64()));
+
     // send disconnection message to server log
     emit room_message(player->reportHeader() + tr("disconnected"));
 
@@ -1145,8 +1153,6 @@ void Room::reportDisconnection(){
             player->setParent(NULL);
             players.removeOne(player);
 
-            QString screen_name = Config.ContestMode ? tr("Contestant") : player->screenName();
-            broadcastInvoke("removeSpeak", QString(screen_name.toUtf8().toBase64()));
 
             broadcastInvoke("removePlayer", player->objectName());
             signup_count --;
@@ -1728,9 +1734,6 @@ void Room::damage(const DamageStruct &damage_data){
             return;
     }
 
-    //analeptic done after damage
-    setPlayerFlag(damage_data.from, "-drank");
-
     // damaged
     broken = thread->trigger(Damaged, damage_data.to, data);
     if(broken)
@@ -2141,6 +2144,12 @@ void Room::doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope)
         CardMoveStar move_star = &move;
         QVariant data = QVariant::fromValue(move_star);
         thread->trigger(CardLost, move.from, data);
+    }
+
+    if(move.to){
+        CardMoveStar move_star = &move;
+        QVariant data = QVariant::fromValue(move_star);
+        thread->trigger(CardGot, move.to, data);
     }
 
     Sanguosha->getCard(move.card_id)->onMove(move);

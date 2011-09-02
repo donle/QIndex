@@ -183,6 +183,7 @@ public:
     bool canSlashWithoutCrossbow() const;
 	void jilei(const char *type);
     bool isJilei(const Card *card) const;
+	QList<const Skill *> getVisibleSkillList() const;
 };
 
 %extend Player{

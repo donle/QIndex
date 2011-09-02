@@ -108,7 +108,7 @@ return {
 [":diwuyuansu"] = "出牌阶段，你可以将一张装备区的牌当做【决斗】使用",
 ["didu"] = "垣根帝督",
 ["weiyuanwuzhi"] = "未元物质",
-[":weiyuanwuzhi"] = "锁定技，你的【过河拆桥】和【乐不思蜀】使用距离为1，【顺手牵羊】和【兵粮寸断】使用无距离限制",
+[":weiyuanwuzhi"] = "你每受到一点伤害你可以选择获得两枚【白翼】标记，或弃掉两枚【白翼】标记视为使用了一张【无中生有】",
 ["baiyi"] = "白翼",
 [":baiyi"] = "游戏开始前你获得6枚【白翼】标记，你每需要打出一张【闪】时可以弃掉一枚【白翼】标记视为打出了一张【闪】；你可以弃掉一枚【白翼】标记对攻击范围外的一名角色使用【杀】",
 ["chenli"] = "麦野沈利",
@@ -229,6 +229,11 @@ return {
 [":yubanwangluo"] = "游戏开始前，你视为两名角色且手牌上限均+1。其中一人于场下，你们不共享场上的牌。出牌阶段，你可以将场下的角色与场上的角色交换。每回合限两次",
 ["quexiandianqi"] = "缺陷电气",
 [":quexiandianqi"] = "任意一名角色每受到一点雷电伤害，你摸X张牌。X为你的两名角色共损失的体力值且不小于1",
+["muyuan"] = "木原数多",
+["chaonaoli"] = "超脑力",
+[":chaonaoli"] = "当你的武将牌正面朝上时，你每从摸牌堆摸牌时，你可以弃掉一张摸牌指定一名角色下回合跳过某个阶段，然后将你的武将牌翻面",
+["muyuanshenquan"] = "木原神拳",
+[":muyuanshenquan"] = "当你的武将牌从背面翻为正面朝上时，你可以使用一张手牌。若你使用了一张手牌你可以弃掉一名角色的武器或摸一张牌",
 
 ["#KaifaDone"] = "%from 选择了技能【%arg】",
 ["#Beici"] = "%from 对 %to 使用了技能【背刺之刃】",
@@ -270,6 +275,7 @@ return {
 ["#ChuxingEffect"] = "%from 的技能【光之处刑】被触发",
 ["#WeiwangEffect"] = "%from 的技能【众教的威望】被触发",
 ["#DuoluoInvoke"] = "%from 的技能【堕落天使】被触发",
+["#NaoliUsed"] = "%from 对 %to 使用了技能【超脑力】， %to 将跳过下回合的 %arg",
 
 ["#ShenyinSlash"] = "%to 选择了不质疑，%from 将 %arg 当做火属性【杀】对 %to 使用",
 ["#ShenyinCheck"] = "%to 选择了质疑，%from 选择的牌为 %arg",
@@ -299,6 +305,12 @@ return {
 ["fazhishuanyu:red"] = "红桃或方块", 
 ["shiershitujushushi:discard"] = "弃掉伤害来源所有装备",
 ["shiershitujushushi:phasechange"] = "直接进入弃牌阶段",
+["chaonaoli:judge"] = "判定阶段",
+["chaonaoli:draw"] = "摸牌阶段",
+["chaonaoli:play"] = "出牌阶段",
+["chaonaoli:discard"] = "弃牌阶段",
+["muyuanshenquan:weapon"] = "弃掉一名角色的武器",
+["muyuanshenquan:drawone"] = "摸一张牌",
 
 ["@control"] = "心灵控制",
 ["@protect"] = "守护",
@@ -311,6 +323,7 @@ return {
 ["@add"] = "叠加",
 ["@follow"] = "追迹",
 ["@annihilate"] = "肃清",
+["@brain"] = "脑力",
 
 ["@sevenmoment-slash"] = "请额外打出用一张【闪】",
 ["@angel-card"] = "请选择一张手牌交给该角色",
@@ -326,6 +339,7 @@ return {
 ["@suqing-card"] = "请弃掉一张合理的手牌，否则失去一点体力",
 ["@chuxing-card"] = "请弃掉一张方块手牌",
 ["@jiuchan-slash"] = "请打出一张【杀】",
+["@naoli-discard"] = "请弃掉一张摸牌",
  
 ["@recycle-show"] = "请亮出一张手牌",
 ["@recycle-choice"] = "请弃掉一张同类型的手牌",
