@@ -63,7 +63,8 @@ SOURCES += src/main.cpp \
     src/packagingeditor.cpp \
     src/boss-mode-scenario.cpp \
     src/index-package.cpp \
-    src/index-cards.cpp
+    src/index-cards.cpp \
+    src/index-god-package.cpp
 HEADERS += src/mainwindow.h \
     src/button.h \
     src/settings.h \
@@ -123,7 +124,8 @@ HEADERS += src/mainwindow.h \
     src/packagingeditor.h \
     src/boss-mode-scenario.h \
     src/index-package.h \
-    src/index-cards.h
+    src/index-cards.h \
+    src/index-god-package.h
 
 FORMS += src/mainwindow.ui \
     src/connectiondialog.ui \

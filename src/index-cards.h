@@ -60,6 +60,13 @@ public:
     Q_INVOKABLE Costume(Card::Suit suit, int number);
 };
 
+class Goggles: public Armor{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE Goggles(Card::Suit suit, int number);
+};
+
 class Lily: public Weapon{
     Q_OBJECT
 

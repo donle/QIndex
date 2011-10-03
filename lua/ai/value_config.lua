@@ -190,45 +190,7 @@ sgs.ai_keep_value = {
     Lightning=-1,
 }
 
-sgs.zhangliao_keep_value = 
-{
-Peach = 6,
-Analeptic = 5.8,
-Jink = 5.7,
-FireSlash = 5.6,
-ThunderSlash = 5.5,
-Slash = 5.4,
-ExNihilo = 4.7
-}
-
-sgs.zhaoyun_keep_value = 
-{
-Peach = 6,
-Analeptic = 5.8,
-Jink = 5.7,
-FireSlash = 5.7,
-ThunderSlash = 5.6,
-Slash = 5.5,
-ExNihilo = 4.7
-}
-
-sgs.huangyueying_keep_value = 
-{
-Peach 		= 6,
-Analeptic 	= 5.9,
-ExNihilo	= 5.7,
-Snatch 		= 5.7,
-Dismantlement = 5.6,
-IronChain 	= 5.5,
-SavageAssault=5.4,
-Duel 		= 5.3,
-ArcheryAttack = 5.2,
-AmazingGrace = 5.1,
-Collateral 	= 5,
-FireAttack	=4.9
-}
-
-sgs.sunshangxiang_keep_value = 
+sgs.agnese_keep_value = 
 {
 Peach = 6,
 Jink = 5.2,
@@ -249,43 +211,6 @@ MoonSpear=5,
 GudingBlade=5,
 DefensiveHorse = 5,
 OffensiveHorse = 5
-}
-sgs.xiahouyuan_keep_value = sgs.sunshangxiang_keep_value
-
-
-
-
-
-sgs.dianwei_keep_value = 
-{
-Peach = 6,
-Jink = 5.1,
-Crossbow = 5,
-Blade = 5,
-Spear = 5,
-DoubleSword =5,
-QinggangSword=5,
-Axe=5,
-KylinBow=5,
-Halberd=5,
-IceSword=5,
-Fan=5,
-MoonSpear=5,
-GudingBlade=5,
-OffensiveHorse = 5
-}
-
-sgs.zhangjiao_keep_value = 
-{
-Peach = 6,
-Jink = 5.9 ,
-Analeptic 		= 5.8
-}
-
-sgs.xiaoqiao_suit_value = 
-{
-spade = 5,
-heart = 5
 }
 
 sgs.mixia_suit_value = 

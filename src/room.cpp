@@ -2056,6 +2056,8 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
     move.to_place = place;
     move.open = open;
 
+    ServerPlayer *from = NULL;
+
     if(card->isVirtualCard()){
         QList<int> subcards = card->getSubcards();
         foreach(int subcard, subcards){
@@ -2063,13 +2065,22 @@ void Room::moveCardTo(const Card *card, ServerPlayer *to, Player::Place place, b
             move.from = getCardOwner(subcard);
             move.from_place = getCardPlace(subcard);
             doMove(move, scope);
+
+            if(move.from)
+                from = move.from;
         }
     }else{
         move.card_id = card->getId();
         move.from = getCardOwner(move.card_id);
         move.from_place = getCardPlace(move.card_id);
         doMove(move, scope);
+
+        if(move.from)
+            from = move.from;
     }
+
+    if(from)
+        thread->trigger(CardLostDone, from);
 }
 
 void Room::doMove(const CardMoveStruct &move, const QSet<ServerPlayer *> &scope){

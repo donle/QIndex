@@ -213,6 +213,35 @@ Costume::Costume(Card::Suit suit, int number):Armor(suit, number){
     skill = new CostumeSkill;
 }
 
+class GogglesSkill: public ArmorSkill{
+public:
+    GogglesSkill(): ArmorSkill("goggles"){
+        events << Predamaged;
+        frequency = Compulsory;
+    }
+
+    virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
+        DamageStruct damage = data.value<DamageStruct>();
+        if(damage.nature != DamageStruct::Thunder){
+            LogMessage log;
+            log.type = "#GogglesEffect";
+            log.arg = objectName();
+            log.from = player;
+            player->getRoom()->sendLog(log);
+
+            damage.nature = DamageStruct::Thunder;
+            data = QVariant::fromValue(damage);
+        }
+
+        return false;
+    }
+};
+
+Goggles::Goggles(Card::Suit suit, int number):Armor(suit, number){
+    setObjectName("goggles");
+    skill = new GogglesSkill;
+}
+
 class LilySkill: public WeaponSkill{
 public:
     LilySkill():WeaponSkill("lily"){
@@ -444,7 +473,10 @@ void IndexPackage::addCards(){
           << new FreezeSlash(Card::Heart, 2)
           << new FreezeSlash(Card::Spade, 3)
           << new FreezeSlash(Card::Spade, 2)
-          << new FreezeSlash(Card::Spade, 3);
+          << new FreezeSlash(Card::Spade, 3)
+          << new Jink(Card::Club, 7)
+          << new Jink(Card::Heart, 7)
+          << new Jink(Card::Diamond, 7);
 
     cards << new FourArea(Card::Spade, 13)
           << new FourArea(Card::Club, 13)
@@ -462,7 +494,8 @@ void IndexPackage::addCards(){
           << new FireSword(Card::Heart, 12)
           << new Origin(Card::Club, 3);
 
-    cards << new Costume(Card::Club, 12);
+    cards << new Costume(Card::Club, 12)
+          << new Goggles(Card::Spade, 7);
 
     foreach(Card *card, cards)
         card->setParent(this);

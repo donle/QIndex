@@ -155,6 +155,7 @@ enum TriggerEvent{
     CardDiscarded,
     CardLost,
     CardGot,
+    CardLostDone,
     DrawpileChange,
 
     CardEffect,

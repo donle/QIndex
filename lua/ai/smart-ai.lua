@@ -924,6 +924,9 @@ function SmartAI:slashProhibit(card, enemy)
 	if card == nil then
 		card = sgs.Sanguosha:cloneCard("slash", sgs.Card_NoSuit, 0)
 	end
+	
+	if enemy:hasSkill("wucunzaigan") and not enemy:inMyAttackRange(self.player) then return true end
+	if enemy:hasSkill("guangzhuchuxing") and enemy:getMark("chuxing_slash") > 0 then return true end
 
     if self:isFriend(enemy) then
         if card:inherits("FireSlash") or self.player:hasWeapon("fan") then
@@ -931,8 +934,6 @@ function SmartAI:slashProhibit(card, enemy)
         end
         if enemy:isChained() and not card:inherits("NatureSlash") then return true end
     end
-    
-	if enemy:hasSkill("wucunzaigan") and not enemy:inMyAttackRange(self.player) then return true end
 	
 	return not self:slashIsEffective(card, enemy)
 end
@@ -3137,12 +3138,8 @@ end
 
 function SmartAI:hasTrickEffective(card, player)
 	if player then
-		if (player:hasSkill("zhichi") and self.room:getTag("Zhichi"):toString() == player:objectName()) or player:hasSkill("wuyan") then
-			return card:inherits("DelayedTrick")
-		end
-	else
-		if self.player:hasSkill("wuyan") then 
-			return card:inherits("DelayedTrick") or card:inherits("GodSalvation") or card:inherits("AmazingGrace")
+		if player:getMark("@protect") > 0 then
+			return not card:inherits("Snatch") and not card:inherits("Dismantlement")
 		end
 	end
 	return true
@@ -3162,12 +3159,14 @@ function SmartAI:canBeTarget(card, player , from)
 		if not card:inherits("DelayedTrick") and not (card:inherits("FireAttack") or card:inherits("GodSalvation") or card:inherits("AmazingGrace")) 
 			and player:objectName() == from:objectName() then return false end
 		local limit = self:getDistanceLimit(card, from)
+		if player:hasSkill("qianglimianyi") and player:isKongcheng() then return false end
 		if limit and from:distanceTo(player) > limit then return false end	
-		if card:isBlack() and player:hasSkill("weimu") then return false end
+		if player:hasSkill("guangzhichuxing") and player:getMark("chuxing_trick") > 0 then return false end
 		if card:inherits("Collateral") and not player:getWeapon() then return false end
 		if (card:inherits("Snatch") or card:inherits("Dismantlement")) and player:isAllNude() then return false end
-		if (card:inherits("Snatch") or card:inherits("Indulgence")) and player:hasSkill("qianxun") then return false end
 		if card:inherits("DelayedTrick") and player:containsTrick(card:objectName()) then return false end
+	elseif card:inherits("Slash") then
+		if player:hasSkill("qianglimianyi") and player:isKongcheng() and self.player:getEquips() then return false end
 	end
 	return true
 end

@@ -34,6 +34,7 @@ extern "C" {
     Package *NewManeuvering();
     Package *NewJoy();
     Package *NewIndex();
+    Package *NewIndexGod();
 
 
     Scenario *NewImpasseScenario();
@@ -51,6 +52,7 @@ Engine::Engine()
     addPackage(NewManeuvering());
     addPackage(NewJoy());
     addPackage(NewIndex());
+    addPackage(NewIndexGod());
 
     addScenario(NewImpasseScenario());
 
@@ -293,7 +295,7 @@ SkillCard *Engine::cloneSkillCard(const QString &name) const{
 }
 
 QString Engine::getVersion() const{
-    return "20110910";
+    return "20111003";
 }
 
 QStringList Engine::getExtensions() const{
@@ -314,7 +316,7 @@ QStringList Engine::getExtensions() const{
 QStringList Engine::getKingdoms() const{
     static QStringList kingdoms;
     if(kingdoms.isEmpty())
-        kingdoms << "agency" << "darkness" << "school" << "qingjiao";
+        kingdoms << "agency" << "darkness" << "school" << "qingjiao" << "god";
 
     return kingdoms;
 }
