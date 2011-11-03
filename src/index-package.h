@@ -14,6 +14,15 @@ public:
    void addCards();
 };
 
+class JiyiCard: public SkillCard{
+    Q_OBJECT
+
+public:
+    Q_INVOKABLE JiyiCard();
+
+    virtual void use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const;
+};
+
 class ZeroSlash: public Slash{
     Q_OBJECT
 

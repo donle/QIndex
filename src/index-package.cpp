@@ -11,43 +11,57 @@
 #include "package.h"
 #include "maneuvering.h"
 
-class Jiyi: public PhaseChangeSkill{
-public:
-    Jiyi():PhaseChangeSkill("wanquanjiyi"){
-    }
+typedef Skill SkillClass;
 
-    virtual bool triggerable(const ServerPlayer *target) const{
-        return target->hasSkill(objectName()) && target->getHp() < target->getLostHp();
-    }
+JiyiCard::JiyiCard(){
+    once = true;
+}
 
-    virtual bool onPhaseChange(ServerPlayer *target) const{
-        Room *room = target->getRoom();
-        if(target->getPhase() == Player::Play){
-            if(room->askForSkillInvoke(target, objectName())){
-               QList<ServerPlayer *> targets;
-               foreach(ServerPlayer *p, room->getOtherPlayers(target)){
-                   if(target->getTempData(p).isEmpty())
-                       targets << p;
-               }
-
-               ServerPlayer *player = room->askForPlayerChosen(target, targets, objectName());
-               QList<const Skill *> skills = player->getVisibleSkillList();
-               target->setTempData(player, skills.length());
-               foreach(const Skill *skill, skills){
-                   if(skill->inherits("WeaponSkill") || skill->inherits("ArmorSkill"))
-                       continue;
-                   if(!player->hasSkill(skill->objectName()))
-                       continue;
-
-                   if(!skill->isLordSkill() && !skill->isLimitedSkill())
-                       room->acquireSkill(target, skill->objectName());
-                   if(skill->objectName() == "baiyi")
-                       target->gainMark("@wings", 6);
-               }
+void JiyiCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer *> &targets) const{
+    QList<ServerPlayer *> players = room->getOtherPlayers(source);
+    foreach(ServerPlayer *player, players){
+        if(player->getMark("wanquanjiyi_target") > 0){
+            player->removeMark("wanquanjiyi_target");
+            foreach(const SkillClass *skill, player->getVisibleSkillList()){
+                room->detachSkillFromPlayer(source, skill->objectName());
+                if(skill->objectName() == "baiyi")
+                    source->loseAllMarks("@wings");
             }
+            break;
         }
+    }
 
-        return false;
+    ServerPlayer *target = targets.first();
+    QList<const SkillClass *> skills = target->getVisibleSkillList();
+    source->setTempData(source, skills.length());
+    foreach(const SkillClass *skill, skills){
+        if(skill->objectName() == "spear"
+           || skill->objectName() == "axe"
+           || skill->objectName() == "fire_sword")
+            continue;
+        if(source->hasSkill(skill->objectName()))
+            continue;
+
+        if(!skill->isLordSkill() && !skill->isLimitedSkill())
+            room->acquireSkill(source, skill->objectName());
+        if(skill->objectName() == "baiyi")
+            source->gainMark("@wings", 6);
+     }
+
+    target->addMark("wanquanjiyi_target");
+}
+
+class Jiyi: public ZeroCardViewAsSkill{
+public:
+    Jiyi(): ZeroCardViewAsSkill("wanquanjiyi"){
+    }
+
+    bool isEnabledAtPlay(const Player *player) const{
+        return !player->hasUsed("JiyiCard") && player->getHp() < player->getMaxHP();
+    }
+
+    virtual const Card *viewAs() const{
+        return new JiyiCard;
     }
 };
 
@@ -517,7 +531,9 @@ public:
         }
 
         if(player->distanceTo(damage.from) <= 1){
-            if(!damage.card->inherits("Slash") || !room->askForDiscard(player, objectName(), 1, true, true))
+            if(!damage.card ||
+               !damage.card->inherits("Slash") ||
+               !room->askForDiscard(player, objectName(), 1, true, true))
                 return false;
             LogMessage log;
             log.type = "#Pingzhang2";
@@ -562,6 +578,8 @@ public:
 
                 CardUseStruct use = data.value<CardUseStruct>();
                 ServerPlayer *shifeng = room->findPlayerBySkillName(objectName());
+                if(!shifeng)
+                    return false;
                 if(use.to.length() != 1 || use.to.at(0) == use.from || use.card->inherits("Nullification"))
                     return false;
 
@@ -936,7 +954,9 @@ public:
         Room *room = player->getRoom();
         DamageStruct damage = data.value<DamageStruct>();
 
-        if(!damage.card->inherits("Slash") || !room->askForSkillInvoke(player, objectName(), data))
+        if(!damage.card ||
+           !damage.card->inherits("Slash") ||
+           !room->askForSkillInvoke(player, objectName(), data))
             return false;
 
         CardUseStruct use;
@@ -1531,7 +1551,7 @@ public:
 
         if(event == CardUsed && player->getPhase() == Player::Play){
             CardUseStruct use = data.value<CardUseStruct>();
-            if(use.card->inherits("Slash") && use.card->getSkillName() == "baiyi")
+            if(use.card->isVirtualCard() && use.card->getSkillName() == "baiyi")
                 player->loseMark("@wings");
         }
 
@@ -2205,7 +2225,9 @@ public:
     virtual bool trigger(TriggerEvent event, ServerPlayer *player, QVariant &data) const{
         Room *room = player->getRoom();
         DamageStruct damage = data.value<DamageStruct>();
-        if(!damage.card->inherits("Slash") || !room->askForSkillInvoke(player, objectName(), data))
+        if(!damage.card ||
+           !damage.card->inherits("Slash") ||
+           !room->askForSkillInvoke(player, objectName(), data))
             return false;
 
         QList<int> cards_id = room->getNCards(qMin(room->getAlivePlayers().length(), 5));
@@ -2405,7 +2427,9 @@ public:
 
             QList<const Skill *> skills = player->getVisibleSkillList();
             foreach(const Skill *skill, skills){
-                if(skill->inherits("WeaponSkill") || skill->inherits("ArmorSkill"))
+                if(skill->objectName() == "spear"
+                   || skill->objectName() == "axe"
+                   || skill->objectName() == "fire_sword")
                     continue;
 
                 room->detachSkillFromPlayer(player, skill->objectName());
@@ -3010,7 +3034,7 @@ public:
         if(event == Damaged){
             DamageStruct damage = data.value<DamageStruct>();
 
-            if(!player->hasSkill(objectName()) || !damage.card->inherits("Slash"))
+            if(!player->hasSkill(objectName()) || !damage.card || !damage.card->inherits("Slash"))
                 return false;
 
             log.from = player;
@@ -3532,8 +3556,10 @@ void WangluoCard::use(Room *room, ServerPlayer *source, const QList<ServerPlayer
     QList<int> old_cards = source->getPile("net");
 
     QList<const Card *> cards = source->getCards("ej");
-    foreach(const Card *card, cards)
+    foreach(const Card *card, cards){
+        room->moveCardTo(card, source, Player::Hand);
         source->addToPile("net", card->getEffectiveId(), false);
+    }
 
     foreach(int card_id, old_cards){
         const Card *card = Sanguosha->getCard(card_id);
@@ -4286,6 +4312,7 @@ IndexPackage::IndexPackage()
     patterns[".suqing"] = new SkillPattern;
     patterns[".naoli"] = new NaoliPattern;
 
+    addMetaObject<JiyiCard>();
     addMetaObject<WeishanCard>();
     addMetaObject<BeiciCard>();
     addMetaObject<BaiyiCard>();
